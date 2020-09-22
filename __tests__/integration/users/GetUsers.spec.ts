@@ -41,4 +41,24 @@ describe('Get users', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(0);
   });
+  it('should be able to paginate users', async () => {
+    await userRepository.save(
+      userRepository.create({
+        name: 'Frane Lukin',
+        email: 'franelukin10@gmail.com',
+        password: 'frane123456',
+      }),
+    );
+    await userRepository.save(
+      userRepository.create({
+        name: 'Marko Juric',
+        email: 'markojuric10@gmail.com',
+        password: 'marko12345',
+      }),
+    );
+    const response = await request(app).get('/users/?skip=1&limit=1');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].name).toMatch('Marko Juric');
+  });
 });

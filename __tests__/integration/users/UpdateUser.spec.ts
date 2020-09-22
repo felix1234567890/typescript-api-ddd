@@ -39,4 +39,17 @@ describe('Update user', () => {
       expect(response.body.email).toMatch('franelukin10@gmail.com');
     }
   });
+  it('should be able to get a user by id', async () => {
+    const user = await userRepository.findOne({
+      where: { email: 'franelukin10@gmail.com' },
+    });
+    if (user) {
+      const response = await request(app).put(`/users/${user.id}`).send({
+        password: 'tojetodda',
+        newPassword: 'avsavavavava',
+      });
+      expect(response.status).toBe(401);
+      expect(response.body.message).toMatch('Wrong password given');
+    }
+  });
 });

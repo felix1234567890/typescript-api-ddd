@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { GetUsersDTO } from '../../../dtos/GetUsersDTO';
 import { CreateUserService } from '../../../services/CreateUserService';
 import { DeleteUserService } from '../../../services/DeleteUserService';
 import { GetUserService } from '../../../services/GetUserService';
@@ -8,8 +9,9 @@ import { UpdateUserService } from '../../../services/UpdateUserService';
 
 export class UserController {
   public async index(request: Request, response: Response): Promise<Response> {
+    const { skip, limit } = request.query as GetUsersDTO;
     const getUsers = container.resolve(GetUsersService);
-    const users = await getUsers.execute();
+    const users = await getUsers.execute({ skip, limit });
     return response.status(200).json(users);
   }
 
