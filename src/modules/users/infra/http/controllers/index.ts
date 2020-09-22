@@ -40,6 +40,6 @@ export class UserController {
     const { id } = request.params;
     const updateUser = container.resolve(UpdateUserService);
     const user = await updateUser.execute({ id, name, email, password, newPassword });
-    return response.status(201).json(user);
+    return response.status(200).json(user);
   }
 }
