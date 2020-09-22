@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { GetUsersDTO } from '../../../dtos/GetUsersDTO';
+import { AuthenticateUserService } from '../../../services/AuthenticateUserService';
 import { CreateUserService } from '../../../services/CreateUserService';
 import { DeleteUserService } from '../../../services/DeleteUserService';
 import { GetUserService } from '../../../services/GetUserService';
@@ -43,5 +44,12 @@ export class UserController {
     const updateUser = container.resolve(UpdateUserService);
     const user = await updateUser.execute({ id, name, email, password, newPassword });
     return response.status(200).json(user);
+  }
+
+  public async login(request: Request, response: Response): Promise<Response> {
+    const { email, password } = request.body;
+    const loginUser = container.resolve(AuthenticateUserService);
+    const res = await loginUser.execute({ email, password });
+    return response.status(200).json(res);
   }
 }
