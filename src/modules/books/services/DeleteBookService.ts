@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
-import { BaseBookService } from './BaseBookServiceClass';
+import { BaseBookService } from './BaseBookService';
 
 @injectable()
 export class DeleteBookService extends BaseBookService {

@@ -1,14 +1,9 @@
 import { injectable } from 'tsyringe';
-import { getRepository, Repository } from 'typeorm';
 import { Book } from '../infra/typeorm/entity';
+import { BaseBookService } from './BaseBookService';
 
 @injectable()
-export class GetBooksService {
-  private bookRepository: Repository<Book>;
-  constructor() {
-    this.bookRepository = getRepository(Book);
-  }
-
+export class GetBooksService extends BaseBookService {
   public async execute(): Promise<Book[]> {
     return await this.bookRepository.find({ relations: ['author'] });
   }

@@ -5,6 +5,7 @@ import { CreateBookService } from '../../../services/CreateBookService';
 import { DeleteBookService } from '../../../services/DeleteBookService';
 import { GetBookService } from '../../../services/GetBookService';
 import { GetBooksService } from '../../../services/GetBooksService';
+import { UpdateBookService } from '../../../services/UpdateBookService';
 
 export class BookController {
   public async index(request: Request, response: Response): Promise<Response> {
@@ -34,5 +35,14 @@ export class BookController {
     const deleteBook = container.resolve(DeleteBookService);
     await deleteBook.execute(id!, userId);
     return response.status(204).json();
+  }
+
+  public async update(request: Request, response: Response): Promise<Response> {
+    const { title, description } = request.body;
+    const id = parseInt(request.params.id);
+    const authorId = parseInt(request.user.id);
+    const updateBook = container.resolve(UpdateBookService);
+    const book = await updateBook.execute({ id, title, description, authorId });
+    return response.status(200).json(book);
   }
 }

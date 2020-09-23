@@ -1,16 +1,11 @@
 import { injectable } from 'tsyringe';
-import { getRepository, Repository } from 'typeorm';
 import AppError from '../../../shared/errors/AppError';
 import { CreateBookDTO } from '../dtos/CreateBookDTO';
 import { Book } from '../infra/typeorm/entity';
+import { BaseBookService } from './BaseBookService';
 
 @injectable()
-export class CreateBookService {
-  private bookRepository: Repository<Book>;
-  constructor() {
-    this.bookRepository = getRepository(Book);
-  }
-
+export class CreateBookService extends BaseBookService {
   public async execute({ title, description, authorId }: CreateBookDTO): Promise<Book> {
     const titleExists = await this.bookRepository.findOne({ where: { title } });
     if (titleExists) {
