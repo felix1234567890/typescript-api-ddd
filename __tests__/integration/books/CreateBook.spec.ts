@@ -6,7 +6,7 @@ import getToken from '../../helpers/getToken';
 let connection: Connection;
 let token: string;
 
-describe('Create books', () => {
+describe('Create book', () => {
   beforeAll(async () => {
     connection = await createConnection();
   });

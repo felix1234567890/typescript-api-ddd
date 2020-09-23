@@ -8,13 +8,12 @@ let connection: Connection;
 let bookRepository: Repository<Book>;
 let userRepository: Repository<User>;
 
-describe('Get books', () => {
+describe('Get book', () => {
   beforeAll(async () => {
     connection = await createConnection();
     bookRepository = getRepository(Book);
     userRepository = getRepository(User);
   });
-
   afterEach(async () => {
     await connection.query('DELETE FROM books');
     await connection.query('DELETE FROM users');
@@ -23,24 +22,19 @@ describe('Get books', () => {
     await connection.close();
   });
 
-  it('should have no books on first request ', async () => {
-    const response = await request(app).get('/books');
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(0);
-  });
-  it('should have books after creation ', async () => {
+  it('should get book by id', async () => {
     const { id } = await userRepository.save(
       userRepository.create({ name: 'Marko Lukin', email: 'franelukin10@gmail.com', password: 'tojeto123' }),
     );
-    await bookRepository.save(
+    const { id: bookId } = await bookRepository.save(
       bookRepository.create({
         title: 'Harry Potter',
         description: 'This is description of a book I have read',
         authorId: id,
       }),
     );
-    const response = await request(app).get('/books');
+    const response = await request(app).get(`/books/${bookId}`);
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
+    expect(response.body.title).toMatch('Harry Potter');
   });
 });
