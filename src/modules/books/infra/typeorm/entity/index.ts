@@ -23,7 +23,7 @@ export class Book {
   @Column({ name: 'author_id' })
   authorId: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, user => user.books)
   @JoinColumn({ name: 'author_id' })
   author: User;
 

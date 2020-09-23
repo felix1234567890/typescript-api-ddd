@@ -16,7 +16,7 @@ export class GetUsersService {
     if (skip && limit) {
       users = await this.userRepository.find({ skip, take: limit });
     } else {
-      users = await this.userRepository.find();
+      users = await this.userRepository.find({ relations: ['books'] });
     }
     return classToClass(users);
   }

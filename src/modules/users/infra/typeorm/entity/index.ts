@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Book } from '../../../../books/infra/typeorm/entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -15,6 +16,9 @@ export class User {
   @Exclude()
   @Column()
   password: string;
+
+  @OneToMany(() => Book, book => book.author, { onDelete: 'CASCADE' })
+  books: Book[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
