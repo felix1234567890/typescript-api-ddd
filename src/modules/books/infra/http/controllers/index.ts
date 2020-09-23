@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { BookGetDeleteDTO } from '../../../dtos/BookGetDeleteDTO';
 import { CreateBookService } from '../../../services/CreateBookService';
+import { GetBookService } from '../../../services/GetBookService';
 import { GetBooksService } from '../../../services/GetBooksService';
 
 export class BookController {
@@ -16,5 +18,12 @@ export class BookController {
     const storeBook = container.resolve(CreateBookService);
     const book = await storeBook.execute({ title, description, authorId: id });
     return response.status(201).json(book);
+  }
+
+  public async book(request: Request, response: Response): Promise<Response> {
+    const { id } = request.params as BookGetDeleteDTO;
+    const getBook = container.resolve(GetBookService);
+    const book = await getBook.execute(id!);
+    return response.status(200).json(book);
   }
 }
