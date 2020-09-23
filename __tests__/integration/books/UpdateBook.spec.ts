@@ -9,7 +9,7 @@ let bookRepository: Repository<Book>;
 let token: string;
 let userId: number;
 
-describe('Delete book', () => {
+describe('Update book', () => {
   beforeAll(async () => {
     connection = await createConnection();
     bookRepository = getRepository(Book);
@@ -31,7 +31,7 @@ describe('Delete book', () => {
     await connection.close();
   });
 
-  it('should delete book by id', async () => {
+  it('should update book by id', async () => {
     const { id: bookId } = await bookRepository.save(
       bookRepository.create({
         title: 'Harry Potter',
@@ -39,19 +39,12 @@ describe('Delete book', () => {
         authorId: userId,
       }),
     );
-    const response = await request(app).delete(`/books/${bookId}`).set('Authorization', `Bearer ${token}`);
-    expect(response.status).toBe(204);
-  });
-  it('should not delete book with wrong id', async () => {
-    const response = await request(app).delete('/books/1').set('Authorization', `Bearer ${token}`);
-    expect(response.body.message).toMatch('Book not found');
-  });
-  it('should not delete book with invalid id', async () => {
-    const response = await request(app).delete('/books/a').set('Authorization', `Bearer ${token}`);
-    expect(response.body.validation).toMatchObject({
-      params: expect.objectContaining({
-        message: expect.stringMatching(`"id" must be a number`),
-      }),
-    });
+    const response = await request(app)
+      .put(`/books/${bookId}`)
+      .send({ title: 'Lord of the rings' })
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.title).toMatch('Lord of the rings');
+    expect(response.body.description).toMatch('This is description of a book I have read');
   });
 });
