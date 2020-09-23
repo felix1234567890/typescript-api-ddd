@@ -21,7 +21,7 @@ export class Book {
   description: string;
 
   @Column({ name: 'author_id' })
-  authorId: string;
+  authorId: number;
 
   @ManyToOne(() => User, user => user.books)
   @JoinColumn({ name: 'author_id' })

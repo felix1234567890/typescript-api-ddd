@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { BookGetDeleteDTO } from '../../../dtos/BookGetDeleteDTO';
 import { CreateBookService } from '../../../services/CreateBookService';
+import { DeleteBookService } from '../../../services/DeleteBookService';
 import { GetBookService } from '../../../services/GetBookService';
 import { GetBooksService } from '../../../services/GetBooksService';
 
@@ -16,7 +17,7 @@ export class BookController {
     const { title, description } = request.body;
     const { id } = request.user;
     const storeBook = container.resolve(CreateBookService);
-    const book = await storeBook.execute({ title, description, authorId: id });
+    const book = await storeBook.execute({ title, description, authorId: parseInt(id) });
     return response.status(201).json(book);
   }
 
@@ -25,5 +26,13 @@ export class BookController {
     const getBook = container.resolve(GetBookService);
     const book = await getBook.execute(id!);
     return response.status(200).json(book);
+  }
+
+  public async delete(request: Request, response: Response): Promise<Response> {
+    const { id } = request.params as BookGetDeleteDTO;
+    const { id: userId } = request.user;
+    const deleteBook = container.resolve(DeleteBookService);
+    await deleteBook.execute(id!, userId);
+    return response.status(204).json();
   }
 }

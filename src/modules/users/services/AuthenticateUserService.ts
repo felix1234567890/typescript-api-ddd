@@ -1,11 +1,11 @@
 import { inject, injectable } from 'tsyringe';
-import { getRepository, Repository } from 'typeorm';
 import AppError from '../../../shared/errors/AppError';
 import { LoginUserDTO } from '../dtos/LoginUserDTO';
 import { User } from '../infra/typeorm/entity';
 import { BcryptHashProvider } from '../providers/BCryptHashProvider';
 import { sign } from 'jsonwebtoken';
 import { classToClass } from 'class-transformer';
+import { BaseUserService } from './BaseUserService';
 
 interface Response {
   user: User;
@@ -13,13 +13,12 @@ interface Response {
 }
 
 @injectable()
-export class AuthenticateUserService {
-  private userRepository: Repository<User>;
+export class AuthenticateUserService extends BaseUserService {
   constructor(
     @inject('HashProvider')
     private hashProvider: BcryptHashProvider,
   ) {
-    this.userRepository = getRepository(User);
+    super();
   }
 
   public async execute({ email, password }: LoginUserDTO): Promise<Response> {

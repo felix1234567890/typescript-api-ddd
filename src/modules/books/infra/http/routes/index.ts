@@ -8,5 +8,6 @@ const routes = Router();
 const bookController = new BookController();
 routes.get('/', bookController.index);
 routes.get('/:id', BookGetDeleteValidator, bookController.book);
+routes.delete('/:id', ensureAuthenticated, BookGetDeleteValidator, bookController.delete);
 routes.post('/', ensureAuthenticated, BookStoreValidator, bookController.store);
 export default routes;

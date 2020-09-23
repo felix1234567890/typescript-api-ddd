@@ -1,16 +1,15 @@
 import { classToClass } from 'class-transformer';
 import { inject, injectable } from 'tsyringe';
-import { getRepository, Repository } from 'typeorm';
 import AppError from '../../../shared/errors/AppError';
 import { CreateUserDTO } from '../dtos/CreateUserDTO';
 import { User } from '../infra/typeorm/entity';
 import { BcryptHashProvider } from '../providers/BCryptHashProvider';
+import { BaseUserService } from './BaseUserService';
 
 @injectable()
-export class CreateUserService {
-  private userRepository: Repository<User>;
+export class CreateUserService extends BaseUserService {
   constructor(@inject('HashProvider') private hashProvider: BcryptHashProvider) {
-    this.userRepository = getRepository(User);
+    super();
   }
 
   public async execute({ name, email, password }: CreateUserDTO): Promise<User> {

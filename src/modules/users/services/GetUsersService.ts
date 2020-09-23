@@ -1,16 +1,11 @@
 import { classToClass } from 'class-transformer';
 import { injectable } from 'tsyringe';
-import { getRepository, Repository } from 'typeorm';
 import { GetUsersDTO } from '../dtos/GetUsersDTO';
 import { User } from '../infra/typeorm/entity';
+import { BaseUserService } from './BaseUserService';
 
 @injectable()
-export class GetUsersService {
-  private userRepository: Repository<User>;
-  constructor() {
-    this.userRepository = getRepository(User);
-  }
-
+export class GetUsersService extends BaseUserService {
   public async execute({ skip, limit }: GetUsersDTO): Promise<User[]> {
     let users;
     if (skip && limit) {
