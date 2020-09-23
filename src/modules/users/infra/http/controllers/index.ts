@@ -32,8 +32,9 @@ export class UserController {
 
   public async delete(request: Request, response: Response): Promise<Response> {
     const { id } = request.params;
+    const { id: userId } = request.user;
     const deleteUser = container.resolve(DeleteUserService);
-    await deleteUser.execute(id);
+    await deleteUser.execute(id, userId);
 
     return response.status(204).json();
   }
@@ -41,8 +42,9 @@ export class UserController {
   public async update(request: Request, response: Response): Promise<Response> {
     const { name, email, password, newPassword } = request.body;
     const { id } = request.params;
+    const { id: userId } = request.user;
     const updateUser = container.resolve(UpdateUserService);
-    const user = await updateUser.execute({ id, name, email, password, newPassword });
+    const user = await updateUser.execute({ id, name, email, password, newPassword, userId });
     return response.status(200).json(user);
   }
 

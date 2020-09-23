@@ -48,4 +48,19 @@ describe('Delete user', () => {
       }),
     });
   });
+  it('should not be able to delete some other user', async () => {
+    await request(app).post('/users').send({
+      name: 'Ivo Ivic',
+      email: 'ivoivic@gmail.com',
+      password: 'jasamivo123',
+    });
+    const user = await userRepository.findOne({
+      where: { email: 'ivoivic@gmail.com' },
+    });
+    if (user) {
+      const response = await request(app).delete(`/users/${user.id}`).set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(401);
+      expect(response.body.message).toMatch('You cannot delete other users');
+    }
+  });
 });

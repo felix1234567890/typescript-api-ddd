@@ -35,9 +35,6 @@ describe('Update user', () => {
       const response = await request(app).put(`/users/${user.id}`).send({
         name: 'Frane Lukin',
       });
-      // expect(response.status).toBe(200);
-      // expect(response.body.name).toMatch('Frane Lukin');
-      // expect(response.body.email).toMatch('franelukin10@gmail.com');
       expect(response.status).toBe(401);
       expect(response.body.message).toMatch('Token missing');
     }
@@ -55,7 +52,27 @@ describe('Update user', () => {
         })
         .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(401);
-      // expect(response.body.message).toMatch('Wrong password given');
+      expect(response.body.message).toMatch('Wrong password given');
+    }
+  });
+  it('should not be able to update with wrong token', async () => {
+    await request(app).post('/users').send({
+      name: 'Ivo Ivic',
+      email: 'ivoivic@gmail.com',
+      password: 'jasamivo123',
+    });
+    const user = await userRepository.findOne({
+      where: { email: 'ivoivic@gmail.com' },
+    });
+    if (user) {
+      const response = await request(app)
+        .put(`/users/${user.id}`)
+        .send({
+          name: 'Ljubo Ljubic',
+        })
+        .set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(401);
+      expect(response.body.message).toMatch('You cannot update other users');
     }
   });
 });

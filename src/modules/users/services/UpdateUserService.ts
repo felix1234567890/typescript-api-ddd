@@ -13,13 +13,16 @@ export class UpdateUserService {
     this.userRepository = getRepository(User);
   }
 
-  public async execute({ id, name, email, password, newPassword }: UpdateUserDTO): Promise<User> {
+  public async execute({ id, name, email, password, newPassword, userId }: UpdateUserDTO): Promise<User> {
     if (typeof id === 'string') {
       id = parseInt(id);
     }
     const user = await this.userRepository.findOne({ id });
     if (!user) {
       throw new AppError('User not found', 404);
+    }
+    if (user.id !== parseInt(userId)) {
+      throw new AppError('You cannot update other users', 401);
     }
     const emailExists = await this.userRepository.findOne({ where: { email } });
     if (emailExists) {
