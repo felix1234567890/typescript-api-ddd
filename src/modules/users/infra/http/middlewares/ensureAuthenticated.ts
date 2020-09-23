@@ -23,7 +23,6 @@ export default function ensureAuthenticated(request: Request, _response: Respons
     };
     return next();
   } catch (error) {
-    console.log(error);
     throw new AppError('Token not valid.', 401);
   }
 }
