@@ -10,6 +10,6 @@ export class GetBooksService {
   }
 
   public async execute(): Promise<Book[]> {
-    return await this.bookRepository.find();
+    return await this.bookRepository.find({ relations: ['author'] });
   }
 }
