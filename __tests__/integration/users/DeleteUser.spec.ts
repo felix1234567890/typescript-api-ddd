@@ -2,14 +2,24 @@ import { Connection, createConnection, getRepository, Repository } from 'typeorm
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
+import getToken from '../../helpers/getToken';
 
 let connection: Connection;
 let userRepository: Repository<User>;
+let token: string;
 
 describe('Delete user', () => {
   beforeAll(async () => {
     connection = await createConnection();
     userRepository = getRepository(User);
+  });
+  beforeEach(async () => {
+    await request(app).post('/users').send({
+      name: 'Marko Lukin',
+      email: 'franelukin10@gmail.com',
+      password: 'tojeto123',
+    });
+    token = await getToken('franelukin10@gmail.com', 'tojeto123');
   });
   afterEach(async () => {
     await connection.query('DELETE FROM users');
@@ -17,37 +27,19 @@ describe('Delete user', () => {
   afterAll(async () => {
     await connection.close();
   });
-  it('should be able to delete a user', async () => {
-    const { id } = await userRepository.save(
-      userRepository.create({
-        name: 'Marko Lukin',
-        email: 'franelukin10@gmail.com',
-        password: 'tojeto123',
-      }),
-    );
-    const response = await request(app).delete(`/users/${id}`);
-    const deletedUser = await userRepository.findOne({
+  it('should not be able to delete a user without token', async () => {
+    const user = await userRepository.findOne({
       where: { email: 'franelukin10@gmail.com' },
     });
+    if (user) {
+      const response = await request(app).delete(`/users/${user.id}`);
 
-    expect(deletedUser).toBeFalsy();
-
-    expect(response.status).toBe(204);
+      expect(response.status).toBe(401);
+      expect(response.body.message).toMatch('Token missing');
+    }
   });
   it('should not be able to delete a user with non-valid id', async () => {
-    await userRepository.save(
-      userRepository.create({
-        name: 'Marko Lukin',
-        email: 'franelukin10@gmail.com',
-        password: 'tojeto123',
-      }),
-    );
-    const response = await request(app).delete(`/users/aaaa`);
-    const deletedUser = await userRepository.findOne({
-      where: { email: 'franelukin10@gmail.com' },
-    });
-
-    expect(deletedUser).toBeTruthy();
+    const response = await request(app).delete(`/users/aaaa`).set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(400);
     expect(response.body.validation).toMatchObject({
