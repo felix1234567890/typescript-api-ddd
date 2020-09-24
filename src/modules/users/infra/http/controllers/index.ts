@@ -35,7 +35,6 @@ export class UserController {
     const { id: userId } = request.user;
     const deleteUser = container.resolve(DeleteUserService);
     await deleteUser.execute(id, userId);
-
     return response.status(204).json();
   }
 
