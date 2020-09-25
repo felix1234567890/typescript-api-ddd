@@ -19,7 +19,7 @@ class ReviewRepository implements IReviewRepository {
   }
 
   public async findAll(): Promise<Review[]> {
-    return await this.ormRepository.find();
+    return await this.ormRepository.find({ relations: ['book', 'book.author'] });
   }
 
   public async create({ bookId, text }: CreateReviewDTO): Promise<Review> {
