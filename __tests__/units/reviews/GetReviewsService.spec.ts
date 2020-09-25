@@ -13,10 +13,12 @@ describe('Get Reviews Service', () => {
     await fakeReviewRepository.create({
       bookId: 1,
       text: 'BLA BLA BLA BLA LABA 1',
+      userId: 10,
     });
     await fakeReviewRepository.create({
       bookId: 2,
       text: 'BLA BLA BLA BLA LABA 2',
+      userId: 10,
     });
     await expect(getReviews.execute()).resolves.toHaveLength(2);
   });

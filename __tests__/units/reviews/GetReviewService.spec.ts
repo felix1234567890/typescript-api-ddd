@@ -13,6 +13,7 @@ describe('Get Review Service', () => {
     const { id } = await fakeReviewRepository.create({
       bookId: 1,
       text: 'BLA BLA BLA BLA LABA 1',
+      userId: 10,
     });
     await expect(getReview.execute(id)).resolves.toHaveProperty('bookId', 1);
   });

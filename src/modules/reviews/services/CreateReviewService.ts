@@ -17,7 +17,7 @@ export class CreateReviewService extends BaseBookService {
       throw new AppError('Cannot create review for a book that does not exist');
     }
     if (book.authorId === userId) {
-      throw new AppError('You can not create review for your own book');
+      throw new AppError('You can not create review for your own book', 401);
     }
     const review = await this.reviewRepository.create({ text, bookId });
     return review;
