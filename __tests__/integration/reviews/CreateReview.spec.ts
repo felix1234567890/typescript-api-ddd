@@ -1,15 +1,16 @@
-import { Connection, createConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import getToken from '../../helpers/getToken';
+import { dataSource } from '../../../src/data-source';
 
-let connection: Connection;
+let connection: DataSource;;
 let token: string;
 let token2: string;
 let bookId: number;
 describe('Create review', () => {
   beforeAll(async () => {
-    connection = await createConnection();
+    connection = await dataSource.initialize();
   });
   beforeEach(async () => {
     await request(app).post('/users').send({
@@ -39,7 +40,7 @@ describe('Create review', () => {
     await connection.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should not be able to create a review for own book', async () => {

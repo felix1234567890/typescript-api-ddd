@@ -7,7 +7,7 @@ import { BaseBookService } from './BaseBookService';
 @injectable()
 export class UpdateBookService extends BaseBookService {
   public async execute({ id, title, description, authorId }: UpdateBookDTO): Promise<Book> {
-    const book = await this.bookRepository.findOne({ id });
+    const book = await this.bookRepository.findOne({ where: {id} });
     if (!book) {
       throw new AppError('Book not found', 404);
     }

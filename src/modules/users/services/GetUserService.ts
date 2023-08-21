@@ -1,4 +1,3 @@
-import { classToClass } from 'class-transformer';
 import { injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
 import { User } from '../infra/typeorm/entity';
@@ -10,10 +9,10 @@ export class GetUserService extends BaseUserService {
     if (typeof id === 'string') {
       id = parseInt(id);
     }
-    const user = await this.userRepository.findOne({ id });
+    const user = await this.userRepository.findOne({ where: {id} });
     if (!user) {
       throw new AppError('User not found');
     }
-    return classToClass(user);
+    return user
   }
 }

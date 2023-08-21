@@ -4,7 +4,6 @@ import { LoginUserDTO } from '../dtos/LoginUserDTO';
 import { User } from '../infra/typeorm/entity';
 import { BcryptHashProvider } from '../providers/BCryptHashProvider';
 import { sign } from 'jsonwebtoken';
-import { classToClass } from 'class-transformer';
 import { BaseUserService } from './BaseUserService';
 
 interface Response {
@@ -33,7 +32,7 @@ export class AuthenticateUserService extends BaseUserService {
     const secret = <string>process.env.JWT_SECRET;
     const token = sign({}, secret, { subject: user.id.toString(), expiresIn: '6h' });
     return {
-      user: classToClass(user),
+      user,
       token,
     };
   }

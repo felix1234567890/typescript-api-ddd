@@ -1,7 +1,7 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import { NextFunction, RequestHandler, Request, Response } from 'express';
 
-export default (request: Request, response: Response, next: NextFunction): RequestHandler => {
+export default (request: Request, response: Response, next: NextFunction) => {
   return celebrate(
     {
       [Segments.BODY]: Joi.object().keys({

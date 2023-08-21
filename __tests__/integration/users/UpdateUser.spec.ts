@@ -1,17 +1,18 @@
-import { Connection, createConnection, getRepository, Repository } from 'typeorm';
+import {  DataSource, Repository } from 'typeorm';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import getToken from '../../helpers/getToken';
+import { dataSource } from '../../../src/data-source';
 
-let connection: Connection;
+let connection: DataSource;
 let userRepository: Repository<User>;
 let token: string;
 
 describe('Update user', () => {
   beforeAll(async () => {
-    connection = await createConnection();
-    userRepository = getRepository(User);
+    connection = await dataSource.initialize();
+    userRepository = dataSource.getRepository(User);
   });
   beforeEach(async () => {
     await request(app).post('/users').send({
@@ -25,7 +26,7 @@ describe('Update user', () => {
     await connection.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.close();
+    await connection.destroy();
   });
   it('should not be able to update user without token', async () => {
     const user = await userRepository.findOne({

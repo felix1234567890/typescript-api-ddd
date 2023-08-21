@@ -1,18 +1,19 @@
-import { Connection, createConnection, getRepository, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
 import getToken from '../../helpers/getToken';
+import { dataSource } from '../../../src/data-source';
 
-let connection: Connection;
+let connection: DataSource;
 let bookRepository: Repository<Book>;
 let token: string;
 let userId: number;
 
 describe('Update book', () => {
   beforeAll(async () => {
-    connection = await createConnection();
-    bookRepository = getRepository(Book);
+    connection = await dataSource.initialize();
+    bookRepository = dataSource.getRepository(Book);
   });
   beforeEach(async () => {
     const response = await request(app).post('/users').send({
@@ -28,7 +29,7 @@ describe('Update book', () => {
     await connection.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should update book by id', async () => {

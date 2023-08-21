@@ -1,21 +1,22 @@
-import { Connection, createConnection, getRepository, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
+import { dataSource } from '../../../src/data-source';
 
-let connection: Connection;
+let connection: DataSource;;
 let userRepository: Repository<User>;
 
 describe('Get user', () => {
   beforeAll(async () => {
-    connection = await createConnection();
-    userRepository = getRepository(User);
+    connection = await dataSource.initialize();
+    userRepository =dataSource.getRepository(User);
   });
   afterEach(async () => {
     await connection.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.close();
+    await connection.destroy();
   });
   it('should be able to get a user by id', async () => {
     const { id } = await userRepository.save(

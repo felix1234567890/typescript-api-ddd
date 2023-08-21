@@ -11,7 +11,7 @@ export class CreateBookService extends BaseBookService {
     if (titleExists) {
       throw new AppError('Cannot add book with already existing title');
     }
-    const book = await this.bookRepository.create({ title, description, authorId });
+    const book = this.bookRepository.create({ title, description, authorId });
     await this.bookRepository.save(book);
     return book;
   }

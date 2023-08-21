@@ -1,13 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import AppError from '../../../../../shared/errors/AppError';
 import config from '../../../../../config';
 
-interface TokenPayload {
-  iat: string;
-  exp: string;
-  sub: string;
-}
+
 
 export default function ensureAuthenticated(request: Request, _response: Response, next: NextFunction): void {
   const authHeader = request.headers.authorization;
@@ -17,9 +13,9 @@ export default function ensureAuthenticated(request: Request, _response: Respons
   const token = authHeader.split(' ')[1];
   try {
     const decoded = verify(token, config.secret);
-    const { sub } = decoded as TokenPayload;
+    const { sub } = decoded as JwtPayload;
     request.user = {
-      id: sub,
+      id: sub as string,
     };
     return next();
   } catch (error) {
