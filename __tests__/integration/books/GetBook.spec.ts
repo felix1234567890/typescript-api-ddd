@@ -1,16 +1,17 @@
 import { DataSource, Repository } from 'typeorm';
 import request from 'supertest';
-import app from '../../../src/shared/infra/http/app';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import { dataSource } from '../../../src/data-source';
+import server from '../../../src/shared/infra/http/server';
 
 let bookRepository: Repository<Book>;
 let userRepository: Repository<User>;
 
 describe('Get book', () => {
+  let connection:DataSource
   beforeAll(async () => {
-    // connection = await dataSource.initialize();
+     connection = await dataSource.initialize();
     bookRepository = dataSource.getRepository(Book);
     userRepository = dataSource.getRepository(User);
   });
@@ -19,7 +20,8 @@ describe('Get book', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    // await connection.destroy();
+   await connection.destroy();
+   server.close()
   });
 
   it('should get book by id', async () => {
@@ -33,7 +35,7 @@ describe('Get book', () => {
         authorId: id,
       }),
     );
-    const response = await request(app).get(`/books/${bookId}`);
+    const response = await request(server).get(`/books/${bookId}`);
     expect(response.status).toBe(200);
     expect(response.body.title).toMatch('Harry Potter');
   });

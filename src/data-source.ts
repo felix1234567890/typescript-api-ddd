@@ -19,12 +19,12 @@ const devConfig = new DataSource({
 const testConfig = new DataSource({
   name: 'default',
   type: 'mysql',
-  host: 'db',
+  host: 'localhost',
   port: 3306,
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   synchronize: true,
-  entities: [User, Book, Review],
+  entities: ['./src/modules/**/infra/typeorm/entity/*{.ts,.js}'],
   database: process.env.DB_NAME,
 });
 export const dataSource = process.env.NODE_ENV === 'test' ? testConfig : devConfig;
