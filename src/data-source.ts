@@ -19,7 +19,7 @@ const devConfig = new DataSource({
 const testConfig = new DataSource({
   name: 'default',
   type: 'mysql',
-  host: 'localhost',
+  host: 'db',
   port: 3306,
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
