@@ -5,14 +5,13 @@ import { Book } from '../../../src/modules/books/infra/typeorm/entity';
 import getToken from '../../helpers/getToken';
 import { dataSource } from '../../../src/data-source';
 
-let connection: DataSource;
 let bookRepository: Repository<Book>;
 let token: string;
 let userId: number;
 
 describe('Update book', () => {
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    // connection = await dataSource.initialize();
     bookRepository = dataSource.getRepository(Book);
   });
   beforeEach(async () => {
@@ -25,11 +24,11 @@ describe('Update book', () => {
     userId = response.body.id;
   });
   afterEach(async () => {
-    await connection.query('DELETE FROM books');
-    await connection.query('DELETE FROM users');
+    await dataSource.query('DELETE FROM books');
+    await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    // await connection.destroy();
   });
 
   it('should update book by id', async () => {
@@ -40,6 +39,7 @@ describe('Update book', () => {
         authorId: userId,
       }),
     );
+    console.log(bookId);
     const response = await request(app)
       .put(`/books/${bookId}`)
       .send({ title: 'Lord of the rings' })

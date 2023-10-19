@@ -1,5 +1,5 @@
 import { celebrate, Joi, Segments } from 'celebrate';
-import { NextFunction, RequestHandler, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 export default (request: Request, response: Response, next: NextFunction) => {
   return celebrate(

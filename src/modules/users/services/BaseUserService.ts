@@ -1,4 +1,4 @@
-import {  Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { dataSource } from '../../../data-source';
 import { User } from '../infra/typeorm/entity';
 

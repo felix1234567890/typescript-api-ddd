@@ -1,13 +1,10 @@
-import { DataSource } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import { dataSource } from '../../../src/data-source';
 
-let connection: DataSource;;
-
 describe('Get user', () => {
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    //  connection = await dataSource.initialize();
   });
   beforeEach(async () => {
     await request(app).post('/users').send({
@@ -17,10 +14,10 @@ describe('Get user', () => {
     });
   });
   afterEach(async () => {
-    await connection.query('DELETE FROM users');
+    await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    // await connection.destroy();
   });
   it('should be able to authenticate a user with valid credentials', async () => {
     const response = await request(app).post('/users/login').send({

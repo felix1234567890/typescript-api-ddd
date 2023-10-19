@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build":"tsc",
     "dev": "ts-node-dev  --inspect --transpile-only --ignore-watch node_modules src/shared/infra/http/server.ts",
-    "test": "cross-env NODE_ENV=test jest --verbose -i --bail --detectOpenHandles"
+    "test": "cross-env NODE_ENV=test jest --verbose -i --bail --detectOpenHandles",
+    "lint": "eslint --ignore-path .eslintignore --ext .js,.ts",
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
   },
   "keywords": [],
   "author": "",

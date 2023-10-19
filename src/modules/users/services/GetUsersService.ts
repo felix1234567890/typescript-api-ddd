@@ -12,6 +12,6 @@ export class GetUsersService extends BaseUserService {
     } else {
       users = await this.userRepository.find({ relations: ['books'] });
     }
-    return users
+    return users;
   }
 }

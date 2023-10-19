@@ -9,10 +9,10 @@ export class GetUserService extends BaseUserService {
     if (typeof id === 'string') {
       id = parseInt(id);
     }
-    const user = await this.userRepository.findOne({ where: {id} });
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new AppError('User not found');
     }
-    return user
+    return user;
   }
 }

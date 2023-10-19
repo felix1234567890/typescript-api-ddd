@@ -15,11 +15,12 @@ export class UpdateUserService extends BaseUserService {
     if (typeof id === 'string') {
       id = parseInt(id);
     }
-    const user = await this.userRepository.findOne({where: {id} });
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new AppError('User not found', 404);
     }
     if (user.id !== parseInt(userId)) {
+      console.log(user.id, userId);
       throw new AppError('You cannot update other users', 401);
     }
     const emailExists = await this.userRepository.findOne({ where: { email } });
@@ -40,6 +41,6 @@ export class UpdateUserService extends BaseUserService {
       user.password = await this.hashProvider.generateHash(newPassword);
     }
     await this.userRepository.save(user);
-    return user
+    return user;
   }
 }

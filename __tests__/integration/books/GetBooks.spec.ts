@@ -1,27 +1,26 @@
-import {  DataSource, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import { dataSource } from '../../../src/data-source';
 
-let connection: DataSource;;
 let bookRepository: Repository<Book>;
 let userRepository: Repository<User>;
 
 describe('Get books', () => {
   beforeAll(async () => {
-    connection = await dataSource.initialize();
-    bookRepository =dataSource.getRepository(Book);
-    userRepository =dataSource.getRepository(User);
+    // connection = await dataSource.initialize();
+    bookRepository = dataSource.getRepository(Book);
+    userRepository = dataSource.getRepository(User);
   });
 
   afterEach(async () => {
-    await connection.query('DELETE FROM books');
-    await connection.query('DELETE FROM users');
+    await dataSource.query('DELETE FROM books');
+    await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    // await connection.destroy();
   });
 
   it('should have no books on first request ', async () => {

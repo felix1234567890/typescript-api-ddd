@@ -1,4 +1,3 @@
-import { classToClass } from 'class-transformer';
 import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
 import { CreateUserDTO } from '../dtos/CreateUserDTO';
@@ -20,6 +19,6 @@ export class CreateUserService extends BaseUserService {
     const hashedPassword = await this.hashProvider.generateHash(password);
     const user = this.userRepository.create({ name, email, password: hashedPassword });
     await this.userRepository.save(user);
-    return classToClass(user);
+    return user;
   }
 }

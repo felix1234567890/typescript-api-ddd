@@ -1,15 +1,13 @@
-import { DataSource } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import getToken from '../../helpers/getToken';
 import { dataSource } from '../../../src/data-source';
 
-let connection: DataSource;
 let token: string;
 
 describe('Create book', () => {
   beforeAll(async () => {
-    connection = await dataSource.initialize()
+    // connection = await dataSource.initialize()
   });
   beforeEach(async () => {
     await request(app).post('/users').send({
@@ -20,11 +18,11 @@ describe('Create book', () => {
     token = await getToken('franelukin10@gmail.com', 'tojeto123');
   });
   afterEach(async () => {
-    await connection.query('DELETE FROM books');
-    await connection.query('DELETE FROM users');
+    await dataSource.query('DELETE FROM books');
+    await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    // await connection.destroy();
   });
 
   it('should be able to create a book ', async () => {

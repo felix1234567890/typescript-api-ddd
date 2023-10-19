@@ -3,8 +3,6 @@ import { JwtPayload, verify } from 'jsonwebtoken';
 import AppError from '../../../../../shared/errors/AppError';
 import config from '../../../../../config';
 
-
-
 export default function ensureAuthenticated(request: Request, _response: Response, next: NextFunction): void {
   const authHeader = request.headers.authorization;
   if (!authHeader) {
@@ -13,9 +11,10 @@ export default function ensureAuthenticated(request: Request, _response: Respons
   const token = authHeader.split(' ')[1];
   try {
     const decoded = verify(token, config.secret);
-    const { sub } = decoded as JwtPayload;
+    const { id } = decoded as JwtPayload;
+    console.log(decoded);
     request.user = {
-      id: sub as string,
+      id,
     };
     return next();
   } catch (error) {

@@ -4,19 +4,18 @@ import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import { dataSource } from '../../../src/data-source';
 
-let connection: DataSource;;
 let userRepository: Repository<User>;
 
 describe('Create user', () => {
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    // connection = await dataSource.initialize();
     userRepository = dataSource.getRepository(User);
   });
   afterEach(async () => {
-    await connection.query('DELETE FROM users');
+    await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    // await connection.destroy();
   });
   it('Should be able to create new user', async () => {
     const response = await request(app).post('/users').send({

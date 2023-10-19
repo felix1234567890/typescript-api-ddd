@@ -30,7 +30,8 @@ export class AuthenticateUserService extends BaseUserService {
       throw new AppError('Wrong password provided', 401);
     }
     const secret = <string>process.env.JWT_SECRET;
-    const token = sign({}, secret, { subject: user.id.toString(), expiresIn: '6h' });
+    const { id } = user;
+    const token = sign({ id }, secret, { expiresIn: '6h' });
     return {
       user,
       token,

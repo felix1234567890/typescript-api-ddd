@@ -1,4 +1,4 @@
-import {  Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../data-source';
 import AppError from '../../../../../shared/errors/AppError';
 import { CreateReviewDTO } from '../../../dtos/CreateReviewDTO';
@@ -12,7 +12,7 @@ class ReviewRepository implements IReviewRepository {
   }
 
   public async findById(id: number): Promise<Review> {
-    const review = await this.ormRepository.findOne({ where: {id} });
+    const review = await this.ormRepository.findOne({ where: { id } });
     if (!review) {
       throw new AppError('Review not found');
     }

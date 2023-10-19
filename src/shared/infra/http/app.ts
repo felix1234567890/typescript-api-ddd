@@ -5,17 +5,18 @@ import { errors } from 'celebrate';
 import '../../container/index';
 import AppError from '../../errors/AppError';
 import routes from './routes';
-import {dataSource} from '../../../data-source'
+import { dataSource } from '../../../data-source';
 class App {
   public server: Application;
   constructor() {
-    dataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err:unknown) => {
-        console.error("Error during Data Source initialization", err)
-    })
+    dataSource
+      .initialize()
+      .then(() => {
+        console.log('Data Source has been initialized!');
+      })
+      .catch((err: unknown) => {
+        console.error('Error during Data Source initialization', err);
+      });
     this.server = express();
     this.middlewares();
     this.routes();
