@@ -1,8 +1,5 @@
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
-import { Book } from './modules/books/infra/typeorm/entity';
-import { Review } from './modules/reviews/infra/typeorm/entity';
-import { User } from './modules/users/infra/typeorm/entity';
 config();
 
 const devConfig = new DataSource({
@@ -15,9 +12,10 @@ const devConfig = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   entities: ['./src/modules/**/infra/typeorm/entity/*.ts'],
+  dropSchema: true
 });
 const testConfig = new DataSource({
-  name: 'default',
+  name: 'test',
   type: 'mysql',
   host: 'localhost',
   port: 3306,
@@ -26,5 +24,6 @@ const testConfig = new DataSource({
   synchronize: true,
   entities: ['./src/modules/**/infra/typeorm/entity/*{.ts,.js}'],
   database: process.env.DB_NAME,
+  dropSchema: true
 });
 export const dataSource = process.env.NODE_ENV === 'test' ? testConfig : devConfig;
