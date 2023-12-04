@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import request from 'supertest';
-import app from '../../../src/shared/infra/http/app';
+import app from '../../../src/shared/infra/http/server';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
 import getToken from '../../helpers/getToken';
 import { dataSource } from '../../../src/data-source';
@@ -11,7 +11,7 @@ let userId: number;
 
 describe('Update book', () => {
   beforeAll(async () => {
-    // connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     bookRepository = dataSource.getRepository(Book);
   });
   beforeEach(async () => {
@@ -28,7 +28,8 @@ describe('Update book', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    // await connection.destroy();
+    await dataSource.destroy()
+     app.close()
   });
 
   it('should update book by id', async () => {
@@ -39,7 +40,6 @@ describe('Update book', () => {
         authorId: userId,
       }),
     );
-    console.log(bookId);
     const response = await request(app)
       .put(`/books/${bookId}`)
       .send({ title: 'Lord of the rings' })

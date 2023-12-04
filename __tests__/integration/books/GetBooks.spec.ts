@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import request from 'supertest';
-import app from '../../../src/shared/infra/http/app';
+import app from '../../../src/shared/infra/http/server';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import { dataSource } from '../../../src/data-source';
@@ -10,7 +10,7 @@ let userRepository: Repository<User>;
 
 describe('Get books', () => {
   beforeAll(async () => {
-    // connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     bookRepository = dataSource.getRepository(Book);
     userRepository = dataSource.getRepository(User);
   });
@@ -20,7 +20,8 @@ describe('Get books', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    // await connection.destroy();
+    await dataSource.destroy()
+     app.close()
   });
 
   it('should have no books on first request ', async () => {

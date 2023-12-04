@@ -7,13 +7,20 @@ on:
   pull_request:
     branches:
       - '**'
+      
+env:
+  DB_NAME: ${{ vars.DB_NAME }}
+  DB_PASS: ${{vars.DB_PASS}}
+  DB_USER: ${{vars.DB_USER}}
+  MYSQL_ROOT_PASSWORD: ${{vars.MYSQL_ROOT_PASSWORD}}
+  JWT_SECRET: ${{vars.JWT_SECRET}}
 
 jobs:
   build:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: ['16.14.0', '18.10.0', '20.0.0']
+        node: ['20.0.0']
 
     steps:
       - name: Checkout source code
@@ -22,7 +29,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('package-lock.json', '*/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-${{ matrix.node }}
       - name: Use Node.js
@@ -37,6 +44,10 @@ jobs:
         run: npm run format
       - name: Build the docker-compose stack
         run: docker-compose up -d 
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+            time: '30s'
       - name: Check running containers
         run: docker ps -a
       - name: Test

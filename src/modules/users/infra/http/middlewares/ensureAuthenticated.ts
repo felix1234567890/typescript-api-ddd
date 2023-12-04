@@ -12,7 +12,6 @@ export default function ensureAuthenticated(request: Request, _response: Respons
   try {
     const decoded = verify(token, config.secret);
     const { id } = decoded as JwtPayload;
-    console.log(decoded);
     request.user = {
       id,
     };

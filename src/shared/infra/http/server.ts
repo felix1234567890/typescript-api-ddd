@@ -1,3 +1,9 @@
+import { dataSource } from '../../../data-source';
 import app from './app';
-
-app.listen(5000);
+dataSource
+.initialize()
+.catch((err: unknown) => {
+  console.error('Error during Data Source initialization', err);
+});
+const server = app.listen(5000);
+export default server

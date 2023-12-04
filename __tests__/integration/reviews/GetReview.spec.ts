@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import request from 'supertest';
-import app from '../../../src/shared/infra/http/app';
+import app from '../../../src/shared/infra/http/server';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import { Review } from '../../../src/modules/reviews/infra/typeorm/entity';
@@ -12,7 +12,7 @@ let reviewRepository: Repository<Review>;
 
 describe('Get review', () => {
   beforeAll(async () => {
-    // connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     bookRepository = dataSource.getRepository(Book);
     userRepository = dataSource.getRepository(User);
     reviewRepository = dataSource.getRepository(Review);
@@ -24,7 +24,8 @@ describe('Get review', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    // await connection.destroy();
+    await dataSource.destroy()
+     app.close()
   });
 
   it('should get review by id', async () => {
