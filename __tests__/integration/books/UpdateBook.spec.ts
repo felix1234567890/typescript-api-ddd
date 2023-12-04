@@ -10,9 +10,8 @@ let token: string;
 let userId: number;
 
 describe('Update book', () => {
-  let connection:DataSource
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     bookRepository = dataSource.getRepository(Book);
   });
   beforeEach(async () => {
@@ -29,7 +28,7 @@ describe('Update book', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-     await connection.destroy();
+    await dataSource.destroy()
      app.close()
   });
 
@@ -41,7 +40,6 @@ describe('Update book', () => {
         authorId: userId,
       }),
     );
-    console.log(bookId);
     const response = await request(app)
       .put(`/books/${bookId}`)
       .send({ title: 'Lord of the rings' })

@@ -7,16 +7,15 @@ import { dataSource } from '../../../src/data-source';
 let userRepository: Repository<User>;
 
 describe('Get users', () => {
-  let connection:DataSource
   beforeAll(async () => {
-     connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     userRepository = dataSource.getRepository(User);
   });
   afterEach(async () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-     await connection.destroy();
+    await dataSource.destroy()
      app.close()
   });
   it('should be able to get  users', async () => {

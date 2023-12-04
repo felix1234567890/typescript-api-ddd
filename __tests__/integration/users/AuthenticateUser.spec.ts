@@ -1,13 +1,12 @@
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/server';
 import { dataSource } from '../../../src/data-source';
-import { DataSource } from 'typeorm';
+
 
 describe('Get user', () => {
-  let connection:DataSource
-  beforeAll(async () => {
-     connection = await dataSource.initialize()
-  });
+  beforeAll(async()=>{
+    await (await dataSource.initialize()).synchronize(true)
+  })
   beforeEach(async () => {
     await request(app).post('/users').send({
       name: 'Marko Lukin',
@@ -19,7 +18,7 @@ describe('Get user', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-     await connection.destroy();
+    await dataSource.destroy()
      app.close()
   });
   it('should be able to authenticate a user with valid credentials', async () => {

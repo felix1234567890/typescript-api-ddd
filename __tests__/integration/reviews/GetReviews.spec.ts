@@ -11,9 +11,8 @@ let userRepository: Repository<User>;
 let reviewRepository: Repository<Review>;
 
 describe('Get reviews', () => {
-  let connection:DataSource
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     bookRepository = dataSource.getRepository(Book);
     userRepository = dataSource.getRepository(User);
     reviewRepository = dataSource.getRepository(Review);
@@ -25,7 +24,7 @@ describe('Get reviews', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-     await connection.destroy();
+    await dataSource.destroy()
      app.close()
   });
 

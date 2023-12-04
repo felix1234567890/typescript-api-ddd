@@ -9,9 +9,8 @@ let userRepository: Repository<User>;
 let token: string;
 
 describe('Update user', () => {
-  let connection: DataSource;
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     userRepository = dataSource.getRepository(User);
   });
   beforeEach(async () => {
@@ -26,7 +25,7 @@ describe('Update user', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    await dataSource.destroy()
     app.close()
   });
   it('should not be able to update user without token', async () => {

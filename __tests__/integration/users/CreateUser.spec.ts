@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import {  Repository } from 'typeorm';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/server';
@@ -7,16 +7,15 @@ import { dataSource } from '../../../src/data-source';
 let userRepository: Repository<User>;
 
 describe('Create user', () => {
-  let connection: DataSource;
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     userRepository = dataSource.getRepository(User);
   });
   afterEach(async () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    await dataSource.destroy()
     app.close();
   });
   it('Should be able to create new user', async () => {

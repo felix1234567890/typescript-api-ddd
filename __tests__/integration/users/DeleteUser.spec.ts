@@ -9,10 +9,9 @@ let userRepository: Repository<User>;
 let token: string;
 
 describe('Delete user', () => {
-  let connection:DataSource
   beforeAll(async () => {
-   connection = await dataSource.initialize()
-   userRepository = connection.getRepository(User)
+    await (await dataSource.initialize()).synchronize(true)
+   userRepository = dataSource.getRepository(User)
   });
   beforeEach(async () => {
     await request(app).post('/users').send({
@@ -26,7 +25,7 @@ describe('Delete user', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-     await connection.destroy();
+    await dataSource.destroy()
      app.close()
   });
   it('should not be able to delete a user without token', async () => {

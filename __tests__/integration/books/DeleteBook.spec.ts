@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/server';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
@@ -10,9 +10,8 @@ let token: string;
 let userId: number;
 
 describe('Delete book', () => {
-  let connection:DataSource
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     bookRepository = dataSource.getRepository(Book);
   });
   beforeEach(async () => {
@@ -29,7 +28,7 @@ describe('Delete book', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    //  await connection.destroy();
+    await dataSource.destroy()
      app.close()
   });
 

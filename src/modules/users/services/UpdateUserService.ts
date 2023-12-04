@@ -21,8 +21,6 @@ export class UpdateUserService extends BaseUserService {
         throw new AppError('User not found', 404);
       }
       if (user.id !== parseInt(userId)) {
-        console.log(user.id)
-        console.log(userId)
         throw new AppError('You cannot update other users', 401);
       }
       // const emailExists = await this.userRepository.findOne({ where: { email } });
@@ -35,12 +33,9 @@ export class UpdateUserService extends BaseUserService {
       if (password && !newPassword) {
         throw new AppError('You must specify old and new password');
       }
-      console.log(password)
-      console.log(newPassword)
       if (password && newPassword) {
         const checkPassword = await this.hashProvider.compareHash(password, user.password);
-        if (!checkPassword) {
-        console.log('Here')        
+        if (!checkPassword) {      
           throw new AppError('Wrong password given', 401);
         }
         user.password = await this.hashProvider.generateHash(newPassword);

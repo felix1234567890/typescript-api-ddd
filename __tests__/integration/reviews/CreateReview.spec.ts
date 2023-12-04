@@ -8,10 +8,9 @@ let token: string;
 let token2: string;
 let bookId: number;
 describe('Create review', () => {
-  let connection:DataSource
-  beforeAll(async () => {
-     connection = await dataSource.initialize();
-  });
+  beforeAll(async()=>{
+    await (await dataSource.initialize()).synchronize(true)
+  })
   beforeEach(async () => {
     await request(app).post('/users').send({
       name: 'Marko Lukin',
@@ -40,7 +39,7 @@ describe('Create review', () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-     await connection.destroy();
+    await dataSource.destroy()
      app.close()
   });
 

@@ -7,20 +7,18 @@ import { dataSource } from '../../../src/data-source';
 let userRepository: Repository<User>;
 
 describe('Get user', () => {
-  let connection:DataSource
   beforeAll(async () => {
-    connection = await dataSource.initialize();
+    await (await dataSource.initialize()).synchronize(true)
     userRepository = dataSource.getRepository(User);
   });
   afterEach(async () => {
     await dataSource.query('DELETE FROM users');
   });
   afterAll(async () => {
-    await connection.destroy();
+    await dataSource.destroy()
     app.close()
  });
   it('should be able to get a user by id', async () => {
-    console.log(userRepository);
     const { id } = await userRepository.save(
       userRepository.create({
         name: 'Marko Lukin',
