@@ -1,27 +1,26 @@
 import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
 import { LoginUserDTO } from '../dtos/LoginUserDTO';
-import { User } from '../infra/typeorm/entity';
-import { BcryptHashProvider } from '../providers/BCryptHashProvider';
-import { sign } from 'jsonwebtoken';
-import { BaseUserService } from './BaseUserService';
+import { IUser } from '../entities/IUser';
+import { IHashProvider } from '../providers/IHashProvider';
+import { ITokenProvider } from '../providers/ITokenProvider';
+import { IUserRepository } from '../repositories/IUserRepository';
 
 interface Response {
-  user: User;
+  user: IUser;
   token: string;
 }
 
 @injectable()
-export class AuthenticateUserService extends BaseUserService {
+export class AuthenticateUserService {
   constructor(
-    @inject('HashProvider')
-    private hashProvider: BcryptHashProvider,
-  ) {
-    super();
-  }
+    @inject('UserRepository') private userRepository: IUserRepository,
+    @inject('HashProvider') private hashProvider: IHashProvider,
+    @inject('TokenProvider') private tokenProvider: ITokenProvider,
+  ) {}
 
   public async execute({ email, password }: LoginUserDTO): Promise<Response> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new AppError('User with provided email not found', 401);
     }
@@ -29,12 +28,6 @@ export class AuthenticateUserService extends BaseUserService {
     if (!passwordMatch) {
       throw new AppError('Wrong password provided', 401);
     }
-    const secret = <string>process.env.JWT_SECRET;
-    const { id } = user;
-    const token = sign({ id }, secret, { expiresIn: '6h' });
-    return {
-      user,
-      token,
-    };
+    return { user, token: this.tokenProvider.sign(user.id) };
   }
 }

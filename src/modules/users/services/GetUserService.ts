@@ -1,15 +1,14 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
-import { User } from '../infra/typeorm/entity';
-import { BaseUserService } from './BaseUserService';
+import { IUser } from '../entities/IUser';
+import { IUserRepository } from '../repositories/IUserRepository';
 
 @injectable()
-export class GetUserService extends BaseUserService {
-  public async execute(id: number | string): Promise<User> {
-    if (typeof id === 'string') {
-      id = parseInt(id);
-    }
-    const user = await this.userRepository.findOne({ where: { id } });
+export class GetUserService {
+  constructor(@inject('UserRepository') private userRepository: IUserRepository) {}
+
+  public async execute(id: number): Promise<IUser> {
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new AppError('User not found');
     }

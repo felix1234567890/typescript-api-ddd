@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';

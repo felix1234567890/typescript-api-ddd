@@ -1,13 +1,15 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
 import { UpdateBookDTO } from '../dtos/UpdateBookDTO';
-import { Book } from '../infra/typeorm/entity';
-import { BaseBookService } from './BaseBookService';
+import { IBook } from '../entities/IBook';
+import { IBookRepository } from '../repositories/IBookRepository';
 
 @injectable()
-export class UpdateBookService extends BaseBookService {
-  public async execute({ id, title, description, authorId }: UpdateBookDTO): Promise<Book> {
-    const book = await this.bookRepository.findOne({ where: { id } });
+export class UpdateBookService {
+  constructor(@inject('BookRepository') private bookRepository: IBookRepository) {}
+
+  public async execute({ id, title, description, authorId }: UpdateBookDTO): Promise<IBook> {
+    const book = await this.bookRepository.findById(id);
     if (!book) {
       throw new AppError('Book not found', 404);
     }
@@ -20,7 +22,6 @@ export class UpdateBookService extends BaseBookService {
     if (description) {
       book.description = description;
     }
-    await this.bookRepository.save(book);
-    return book;
+    return this.bookRepository.save(book);
   }
 }

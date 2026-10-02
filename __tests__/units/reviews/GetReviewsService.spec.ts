@@ -1,4 +1,4 @@
-import { FakeReviewRepository } from '../../../src/modules/reviews/repositories/FakeRevewRepository';
+import { FakeReviewRepository } from '../../fakes/FakeReviewRepository';
 import { GetReviewsService } from '../../../src/modules/reviews/services/GetReviewsService';
 
 let fakeReviewRepository: FakeReviewRepository;
@@ -13,12 +13,10 @@ describe('Get Reviews Service', () => {
     await fakeReviewRepository.create({
       bookId: 1,
       text: 'BLA BLA BLA BLA LABA 1',
-      userId: 10,
     });
     await fakeReviewRepository.create({
       bookId: 2,
       text: 'BLA BLA BLA BLA LABA 2',
-      userId: 10,
     });
     await expect(getReviews.execute()).resolves.toHaveLength(2);
   });

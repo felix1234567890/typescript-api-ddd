@@ -1,12 +1,14 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
-import { Book } from '../infra/typeorm/entity';
-import { BaseBookService } from './BaseBookService';
+import { IBook } from '../entities/IBook';
+import { IBookRepository } from '../repositories/IBookRepository';
 
 @injectable()
-export class GetBookService extends BaseBookService {
-  public async execute(id: number): Promise<Book | undefined> {
-    const book = await this.bookRepository.findOne({ where: { id }, relations: ['author'] });
+export class GetBookService {
+  constructor(@inject('BookRepository') private bookRepository: IBookRepository) {}
+
+  public async execute(id: number): Promise<IBook> {
+    const book = await this.bookRepository.findById(id, { withAuthor: true });
     if (!book) {
       throw new AppError('Not found', 401);
     }

@@ -1,37 +1,31 @@
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../data-source';
-import AppError from '../../../../../shared/errors/AppError';
-import { CreateReviewDTO } from '../../../dtos/CreateReviewDTO';
-import { IReviewRepository } from '../../../repositories/IReviewRepository';
+import { IReview } from '../../../entities/IReview';
+import { CreateReviewData, IReviewRepository } from '../../../repositories/IReviewRepository';
 import { Review } from '../entity';
 
 class ReviewRepository implements IReviewRepository {
   private ormRepository: Repository<Review>;
+
   constructor() {
     this.ormRepository = dataSource.getRepository(Review);
   }
 
-  public async findById(id: number): Promise<Review> {
-    const review = await this.ormRepository.findOne({ where: { id } });
-    if (!review) {
-      throw new AppError('Review not found');
-    }
-    return review;
+  public findById(id: number): Promise<Review | null> {
+    return this.ormRepository.findOne({ where: { id } });
   }
 
-  public async findAll(): Promise<Review[]> {
-    return await this.ormRepository.find({ relations: ['book', 'book.author'] });
+  public findAll(): Promise<Review[]> {
+    return this.ormRepository.find({ relations: { book: { author: true } } });
   }
 
-  public async create({ bookId, text }: CreateReviewDTO): Promise<Review> {
-    const review = this.ormRepository.create({ bookId, text });
-    await this.ormRepository.save(review);
-    return review;
+  public async create(data: CreateReviewData): Promise<Review> {
+    const review = this.ormRepository.create(data);
+    return this.ormRepository.save(review);
   }
 
-  public async update(review: Review): Promise<Review> {
-    await this.ormRepository.save(review);
-    return review;
+  public update(review: IReview): Promise<Review> {
+    return this.ormRepository.save(review);
   }
 
   public async delete(id: number): Promise<void> {

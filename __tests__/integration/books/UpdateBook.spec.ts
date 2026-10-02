@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import { Book } from '../../../src/modules/books/infra/typeorm/entity';
@@ -39,7 +39,6 @@ describe('Update book', () => {
         authorId: userId,
       }),
     );
-    console.log(bookId);
     const response = await request(app)
       .put(`/books/${bookId}`)
       .send({ title: 'Lord of the rings' })

@@ -6,13 +6,15 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { Review } from '../../../../reviews/infra/typeorm/entity';
 import { User } from '../../../../users/infra/typeorm/entity';
+import { IBook } from '../../../entities/IBook';
 
 @Entity('books')
-export class Book {
+export class Book implements IBook {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,7 +29,7 @@ export class Book {
 
   @ManyToOne(() => User, user => user.books)
   @JoinColumn({ name: 'author_id' })
-  author: User;
+  author: Relation<User>;
 
   @OneToMany(() => Review, review => review.book, { onDelete: 'CASCADE' })
   reviews: Review[];

@@ -1,17 +1,16 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { GetUsersDTO } from '../dtos/GetUsersDTO';
-import { User } from '../infra/typeorm/entity';
-import { BaseUserService } from './BaseUserService';
+import { IUser } from '../entities/IUser';
+import { IUserRepository } from '../repositories/IUserRepository';
 
 @injectable()
-export class GetUsersService extends BaseUserService {
-  public async execute({ skip, limit }: GetUsersDTO): Promise<User[]> {
-    let users;
+export class GetUsersService {
+  constructor(@inject('UserRepository') private userRepository: IUserRepository) {}
+
+  public execute({ skip, limit }: GetUsersDTO): Promise<IUser[]> {
     if (skip && limit) {
-      users = await this.userRepository.find({ skip, take: limit });
-    } else {
-      users = await this.userRepository.find({ relations: ['books'] });
+      return this.userRepository.findPage({ skip, limit });
     }
-    return users;
+    return this.userRepository.findAll();
   }
 }

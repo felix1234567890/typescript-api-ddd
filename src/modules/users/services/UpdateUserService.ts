@@ -1,31 +1,27 @@
 import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
 import { UpdateUserDTO } from '../dtos/UpdateUserDTO';
-import { User } from '../infra/typeorm/entity';
-import { BcryptHashProvider } from '../providers/BCryptHashProvider';
-import { BaseUserService } from './BaseUserService';
+import { IUser } from '../entities/IUser';
+import { IHashProvider } from '../providers/IHashProvider';
+import { IUserRepository } from '../repositories/IUserRepository';
 
 @injectable()
-export class UpdateUserService extends BaseUserService {
-  constructor(@inject('HashProvider') private hashProvider: BcryptHashProvider) {
-    super();
-  }
+export class UpdateUserService {
+  constructor(
+    @inject('UserRepository') private userRepository: IUserRepository,
+    @inject('HashProvider') private hashProvider: IHashProvider,
+  ) {}
 
-  public async execute({ id, name, email, password, newPassword, userId }: UpdateUserDTO): Promise<User> {
-    if (typeof id === 'string') {
-      id = parseInt(id);
-    }
-    const user = await this.userRepository.findOne({ where: { id } });
+  public async execute({ id, name, email, password, newPassword, userId }: UpdateUserDTO): Promise<IUser> {
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new AppError('User not found', 404);
     }
-    if (user.id !== parseInt(userId)) {
-      console.log(user.id, userId);
+    if (user.id !== userId) {
       throw new AppError('You cannot update other users', 401);
     }
-    const emailExists = await this.userRepository.findOne({ where: { email } });
-    if (emailExists) {
-      throw new Error('Email is already in use');
+    if (email && email !== user.email && (await this.userRepository.findByEmail(email))) {
+      throw new AppError('Email is already in use');
     }
     if (name) user.name = name;
     if (email) user.email = email;
@@ -40,7 +36,6 @@ export class UpdateUserService extends BaseUserService {
       }
       user.password = await this.hashProvider.generateHash(newPassword);
     }
-    await this.userRepository.save(user);
-    return user;
+    return this.userRepository.save(user);
   }
 }

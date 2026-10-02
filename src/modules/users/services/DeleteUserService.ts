@@ -1,18 +1,17 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/errors/AppError';
-import { BaseUserService } from './BaseUserService';
+import { IUserRepository } from '../repositories/IUserRepository';
 
 @injectable()
-export class DeleteUserService extends BaseUserService {
-  public async execute(id: number | string, userId: string): Promise<void> {
-    if (typeof id === 'string') {
-      id = parseInt(id);
-    }
-    const user = await this.userRepository.findOne({ where: { id } });
+export class DeleteUserService {
+  constructor(@inject('UserRepository') private userRepository: IUserRepository) {}
+
+  public async execute(id: number, userId: number): Promise<void> {
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new AppError('User not found', 404);
     }
-    if (user.id !== parseInt(userId)) {
+    if (user.id !== userId) {
       throw new AppError('You cannot delete other users', 401);
     }
     await this.userRepository.delete(id);

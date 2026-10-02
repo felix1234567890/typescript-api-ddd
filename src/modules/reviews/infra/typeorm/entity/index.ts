@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { Book } from '../../../../books/infra/typeorm/entity';
@@ -23,7 +24,7 @@ export class Review implements IReview {
 
   @ManyToOne(() => Book, book => book.reviews)
   @JoinColumn({ name: 'book_id' })
-  book?: Book;
+  book?: Relation<Book>;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

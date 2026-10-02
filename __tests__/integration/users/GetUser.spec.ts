@@ -14,7 +14,6 @@ describe('Get user', () => {
     await dataSource.query('DELETE FROM users');
   });
   it('should be able to get a user by id', async () => {
-    console.log(userRepository);
     const { id } = await userRepository.save(
       userRepository.create({
         name: 'Marko Lukin',

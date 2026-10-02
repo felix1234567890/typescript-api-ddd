@@ -1,22 +1,14 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
 import 'reflect-metadata';
-import 'express-async-errors';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import { errors } from 'celebrate';
-import '../../container/index';
+import '../../container';
 import AppError from '../../errors/AppError';
 import routes from './routes';
-import { dataSource } from '../../../data-source';
+
 class App {
   public server: Application;
+
   constructor() {
-    dataSource
-      .initialize()
-      .then(() => {
-        console.log('Data Source has been initialized!');
-      })
-      .catch((err: unknown) => {
-        console.error('Error during Data Source initialization', err);
-      });
     this.server = express();
     this.middlewares();
     this.routes();

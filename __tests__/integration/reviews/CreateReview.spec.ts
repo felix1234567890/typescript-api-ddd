@@ -1,4 +1,3 @@
-import { DataSource } from 'typeorm';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
 import getToken from '../../helpers/getToken';

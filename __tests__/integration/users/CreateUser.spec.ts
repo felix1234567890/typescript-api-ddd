@@ -1,4 +1,4 @@
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../../../src/modules/users/infra/typeorm/entity';
 import request from 'supertest';
 import app from '../../../src/shared/infra/http/app';
@@ -16,6 +16,23 @@ describe('Create user', () => {
   });
   afterAll(async () => {
     // await connection.destroy();
+  });
+  it('should never expose the password hash in responses', async () => {
+    const created = await request(app).post('/users').send({
+      name: 'Marko Lukin',
+      email: 'franelukin10@gmail.com',
+      password: 'tojeto123',
+    });
+    expect(created.body).not.toHaveProperty('password');
+
+    const login = await request(app)
+      .post('/users/login')
+      .send({ email: 'franelukin10@gmail.com', password: 'tojeto123' });
+    expect(login.status).toBe(200);
+    expect(login.body.user).not.toHaveProperty('password');
+
+    const list = await request(app).get('/users');
+    expect(list.body[0]).not.toHaveProperty('password');
   });
   it('Should be able to create new user', async () => {
     const response = await request(app).post('/users').send({

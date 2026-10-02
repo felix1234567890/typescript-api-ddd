@@ -13,20 +13,20 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: ['16.14.0', '18.10.0', '20.0.0']
+        node: ['20.19.0', '22.x', '24.x']
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Cache node modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-${{ matrix.node }}
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
@@ -36,7 +36,7 @@ jobs:
       - name: Prettier
         run: npm run format
       - name: Build the docker-compose stack
-        run: docker-compose up -d 
+        run: docker compose up -d
       - name: Check running containers
         run: docker ps -a
       - name: Test

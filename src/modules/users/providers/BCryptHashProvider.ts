@@ -1,6 +1,7 @@
 import { compare, hash } from 'bcrypt';
+import { IHashProvider } from './IHashProvider';
 
-export class BcryptHashProvider {
+export class BcryptHashProvider implements IHashProvider {
   public generateHash(payload: string): Promise<string> {
     return hash(payload, 8);
   }

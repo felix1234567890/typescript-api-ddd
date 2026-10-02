@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { container } from 'tsyringe';
 import AppError from '../../../../../shared/errors/AppError';
-import config from '../../../../../config';
+import { ITokenProvider } from '../../../providers/ITokenProvider';
 
 export default function ensureAuthenticated(request: Request, _response: Response, next: NextFunction): void {
   const authHeader = request.headers.authorization;
@@ -10,14 +10,10 @@ export default function ensureAuthenticated(request: Request, _response: Respons
   }
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = verify(token, config.secret);
-    const { id } = decoded as JwtPayload;
-    console.log(decoded);
-    request.user = {
-      id,
-    };
-    return next();
-  } catch (error) {
+    const id = container.resolve<ITokenProvider>('TokenProvider').verify(token);
+    request.user = { id };
+  } catch {
     throw new AppError('Token not valid.', 401);
   }
+  next();
 }
