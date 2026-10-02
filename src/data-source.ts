@@ -12,5 +12,7 @@ export const dataSource = new DataSource({
   password: config.dbPassword,
   database: config.dbName,
   synchronize: true,
+  // every test run starts from an empty schema
+  dropSchema: process.env.NODE_ENV === 'test',
   entities: [User, Book, Review],
 });
